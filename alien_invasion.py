@@ -6,6 +6,8 @@ import pygame
 
 from settings import Settings
 
+from ship import Ship
+
 class AlienInvasion:
     '''Overall class to manage game assets and behavior.'''
 
@@ -22,6 +24,11 @@ class AlienInvasion:
         # Set background color for the game:
         self.bg_color = (self.settings.bg_color)
 
+        # Ship requires ai_game in order to initiate.
+        # Here, we pass in self in order to provide this to Ship. 
+        # In return, we get back an instance of ship, tied to the given object of AlienInvasion.
+        self.ship = Ship(self)
+
     def run_game(self):
         '''Start the main loop for the game.'''
         
@@ -33,6 +40,9 @@ class AlienInvasion:
             
             # Fill entire screen with background color:
             self.screen.fill(self.bg_color)
+
+            # Allow the Ship to print to the screen
+            self.ship.blitme()
 
             # Make the most recent screen visible:
             pygame.display.flip()
