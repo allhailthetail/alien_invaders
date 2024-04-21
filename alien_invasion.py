@@ -7,6 +7,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     '''Overall class to manage game assets and behavior.'''
@@ -28,17 +29,20 @@ class AlienInvasion:
         # In return, we get back an instance of ship, tied to the given object of AlienInvasion.
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
 
+        # Create fleet of aliens at start of the game
+        self._create_fleet()
     def _check_events(self):
         '''Respond to keypresses and mouse events'''
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
+            if event.type == pygame.QUIT:
+                sys.exit()
 
-                elif event.type == pygame.KEYDOWN:
-                    self._check_keydown_events(event)
-                elif event.type == pygame.KEYUP:
-                    self._check_keyup_events(event)
+            elif event.type == pygame.KEYDOWN:
+                self._check_keydown_events(event)
+            elif event.type == pygame.KEYUP:
+                self._check_keyup_events(event)
 
     def _check_keydown_events(self,event):
         '''Respond to keypresses'''
@@ -66,6 +70,11 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
     
+    def _create_fleet(self):
+        '''Creates a fleet of aliens on the screen'''
+        alien = Alien(self)
+        self.aliens.add(alien)
+
     def _update_screen(self):
         '''Update images on the screen and flip to a new screen'''
         # Fill entire screen with background color:
@@ -75,6 +84,8 @@ class AlienInvasion:
             bullet.draw_bullet()
         # Allow the Ship to print to the screen
         self.ship.blitme()
+        # Allow the Aliens to print to the screen:
+        self.aliens.draw(self.screen)
         # Make the most recent screen visible:
         pygame.display.flip()
 
