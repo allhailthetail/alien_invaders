@@ -70,10 +70,25 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
     
+    def _create_alien(self, x_position, y_position):
+        '''Creates an alien and places it on the row'''
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x, new_alien.rect.y = x_position, y_position
+        self.aliens.add(new_alien)
+
     def _create_fleet(self):
         '''Creates a fleet of aliens on the screen'''
         alien = Alien(self)
-        self.aliens.add(alien)
+        alien_width, alien_height = alien.rect.size
+
+        current_x, current_y = alien_width, alien_height
+        while current_y < (self.settings.screen_height - 3 * alien_height):
+            while current_x < (self.settings.screen_width - 2 * alien_width):
+                self._create_alien(current_x, current_y)
+                current_x += 2 * alien_width
+            current_x = alien_width
+            current_y += 2 * alien_height
 
     def _update_screen(self):
         '''Update images on the screen and flip to a new screen'''
@@ -97,6 +112,10 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
             print(len(self.bullets)) 
+    
+    def _update_aliens(self):
+        '''Update the positions of all aliens in the fleet'''
+        self.aliens.update()
 
     def run_game(self):
         '''Start the main loop for the game.'''
@@ -104,6 +123,7 @@ class AlienInvasion:
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()            
             # pygame will do best-effort to keep the game's framerate at 60fps
             self.clock.tick(60)
